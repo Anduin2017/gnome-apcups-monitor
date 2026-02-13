@@ -2,7 +2,8 @@
   "name": "APCUPS Monitor",
   "description": "A subtle UPS load monitor for the panel.",
   "uuid": "apcups-monitor@anduin2017",
-  "settings-schema": "org.gnome.shell.extensions.lowkey-ups-monitor",
+  "settings-schema": "org.gnome.shell.extensions.apcups-monitor",
+  "version": 2,
   "shell-version": [ "45", "46", "47", "48", "49" ],
   "url": ""
 }
