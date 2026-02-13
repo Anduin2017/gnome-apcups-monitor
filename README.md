@@ -55,13 +55,5 @@ Verify it's working by running `apcaccess status` in your terminal.
 
 ---
 
-## 🎁 Support the Project
-If you find this extension useful, consider buying me a coffee!
-<p align="left">
-    <a href="https://www.paypal.com/donate/?hosted_button_id=5DCVELP7BSAVQ">
-        <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donate with PayPal" />
-    </a>
-</p>
-
 ## 📄 License
 MIT License.
