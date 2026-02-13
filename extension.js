@@ -104,7 +104,8 @@ export default class ApcUpsExtension extends Extension {
         } catch (e) {
             if (this._label && !this._cancellable.is_cancelled()) {
                 let errStr = e.toString();
-                if (errStr.includes('NOT_FOUND') || errStr.includes('ENOENT') || errStr.includes('failed with exit code 1')) {
+                // 增强匹配逻辑：包含 execute 或 No such file 均视为未安装
+                if (errStr.includes('execute') || errStr.includes('No such file') || errStr.includes('NOT_FOUND')) {
                     this._label.set_text('SETUP');
                     this._detailsArea.label.set_text('UPS service not found!\n\n1. sudo apt install apcupsd\n2. Configure apcupsd.conf\n3. sudo systemctl enable --now apcupsd');
                 } else {
