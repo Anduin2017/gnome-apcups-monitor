@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.apcups-monitor" path="/org/gnome/shell/extensions/apcups-monitor/">
+    <key name="normal-display" type="s">
+      <default>'load'</default>
+      <summary>Display mode during AC power</summary>
+    </key>
+    <key name="battery-display" type="s">
+      <default>'time'</default>
+      <summary>Display mode during battery power</summary>
+    </key>
+    <key name="refresh-rate" type="i">
+      <default>1</default>
+      <summary>Refresh rate in seconds</summary>
+    </key>
+  </schema>
+</schemalist>
