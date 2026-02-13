@@ -47,7 +47,6 @@ export default class ApcUpsExtension extends Extension {
 
     async _updateStatus() {
         try {
-            // 改为异步子进程调用
             let proc = new Gio.Subprocess({
                 argv: ['/usr/sbin/apcaccess', 'status'],
                 flags: Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_PIPE
@@ -59,7 +58,6 @@ export default class ApcUpsExtension extends Extension {
 
             let data = this._parseAllProps(stdout);
 
-            // 计算虚拟瓦特属性
             let nomPower = parseFloat(data.NOMPOWER) || 0;
             let loadPct = parseFloat(data.LOADPCT) || 0;
             if (nomPower > 0) {
@@ -122,7 +120,6 @@ export default class ApcUpsExtension extends Extension {
             this._timeoutId = null;
         }
         
-        // 显式销毁所有创建的 widgets
         if (this._detailsArea) {
             this._detailsArea.destroy();
             this._detailsArea = null;
