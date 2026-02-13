@@ -10,6 +10,7 @@ import Gio from 'gi://Gio';
 export default class ApcUpsExtension extends Extension {
     enable() {
         this._settings = this.getSettings();
+        this._cancellable = new Gio.Cancellable();
         
         this._indicator = new PanelMenu.Button(0.0, this.metadata.name, false);
         this._label = new St.Label({
@@ -51,13 +52,23 @@ export default class ApcUpsExtension extends Extension {
                 argv: ['/usr/sbin/apcaccess', 'status'],
                 flags: Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_PIPE
             });
-            proc.init(null);
-            
-            let [stdout, stderr] = await proc.communicate_utf8_async(null, null);
-            if (!proc.get_successful()) return;
+            proc.init(this._cancellable);
+
+            let stdout = await new Promise((resolve, reject) => {
+                proc.communicate_utf8_async(null, this._cancellable, (p, res) => {
+                    try {
+                        let [success, out, err] = p.communicate_utf8_finish(res);
+                        if (success) resolve(out);
+                        else reject(new Error(err));
+                    } catch (e) {
+                        reject(e);
+                    }
+                });
+            });
+
+            if (!stdout || this._cancellable.is_cancelled()) return;
 
             let data = this._parseAllProps(stdout);
-
             let nomPower = parseFloat(data.NOMPOWER) || 0;
             let loadPct = parseFloat(data.LOADPCT) || 0;
             if (nomPower > 0) {
@@ -66,7 +77,6 @@ export default class ApcUpsExtension extends Extension {
 
             let isOnBatt = data.STATUS && data.STATUS.includes('ONBATT');
             let key = this._settings.get_string(isOnBatt ? 'battery-display' : 'normal-display');
-            
             let rawValue = data[key] || 'N/A';
             let displayValue = this._formatValue(key, rawValue);
 
@@ -86,9 +96,10 @@ export default class ApcUpsExtension extends Extension {
                     .map(k => `${k}: ${data[k] || '?'}`).join('\n');
                 this._detailsArea.label.set_text(detailText);
             }
-
         } catch (e) {
-            if (this._label) this._label.set_text('ERR');
+            if (this._label && !this._cancellable.is_cancelled()) {
+                this._label.set_text('ERR');
+            }
         }
     }
 
@@ -111,6 +122,10 @@ export default class ApcUpsExtension extends Extension {
     }
 
     disable() {
+        if (this._cancellable) {
+            this._cancellable.cancel();
+            this._cancellable = null;
+        }
         if (this._changedId) {
             this._settings.disconnect(this._changedId);
             this._changedId = null;
@@ -119,7 +134,6 @@ export default class ApcUpsExtension extends Extension {
             GLib.Source.remove(this._timeoutId);
             this._timeoutId = null;
         }
-        
         if (this._detailsArea) {
             this._detailsArea.destroy();
             this._detailsArea = null;
@@ -132,7 +146,6 @@ export default class ApcUpsExtension extends Extension {
             this._indicator.destroy();
             this._indicator = null;
         }
-        
         this._settings = null;
     }
 }
