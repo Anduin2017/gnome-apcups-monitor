@@ -10,54 +10,58 @@ A professional, lightweight, and highly customizable UPS monitor for GNOME Shell
 
 ---
 
+## 🛠 Prerequisites (Required)
+
+This extension is a frontend for **apcupsd**. It will not work unless `apcupsd` is installed and properly configured on your system.
+
+### 1. Install apcupsd
+```bash
+sudo apt update
+sudo apt install apcupsd
+```
+
+### 2. Configure apcupsd
+Edit the configuration file:
+```bash
+sudo nano /etc/apcupsd/apcupsd.conf
+```
+Ensure the following lines are set correctly (especially for USB connected UPS):
+- `UPSCABLE usb`
+- `UPSTYPE usb`
+- `DEVICE` (leave blank for auto-detecting USB UPS)
+
+### 3. Restart the service
+```bash
+sudo systemctl enable apcupsd
+sudo systemctl restart apcupsd
+```
+Verify it's working by running `apcaccess status` in your terminal.
+
+---
+
 ## 🚀 Installation
 
 ### Recommended: GNOME Extensions Store
-The easiest way to install and stay updated is through the official store.
-Click the **"Get it on GNOME"** button above to visit the store page.
-
-### Manual Installation (From Source)
-1. Clone the repository:
-   ```bash
-   git clone git@github.com:Anduin2017/gnome-apcups-monitor.git
-   ```
-2. Link the folder to your extensions directory:
-   ```bash
-   ln -s $(pwd) ~/.local/share/gnome-shell/extensions/apcups-monitor@anduin2017
-   ```
-3. Compile the schema:
-   ```bash
-   glib-compile-schemas schemas/
-   ```
-4. Log out and Log in, then enable via the **Extensions** app.
+👉 **[Install from GNOME Extensions Store](https://extensions.gnome.org/extension/9331/apcups-monitor/)**
 
 ---
 
 ## ✨ Features
 
-- **Subtle & Low-key**: Minimalist design that fits perfectly with the GNOME aesthetic.
+- **Asynchronous Execution**: Uses non-blocking subprocesses to ensure zero impact on GNOME Shell performance.
 - **Virtual Power Calculation**: Calculates real-time Wattage (W) based on `NOMPOWER` and `LOADPCT`.
 - **Intelligent Switching**: Set different display modes for AC Power and Battery Power.
-- **Universal Attributes**: Choose any attribute reported by `apcupsd` to display on the panel.
 - **Modern Settings**: Full Libadwaita-based preferences window.
 
 ---
 
-## 🛠 Maintenance & Development
-
-### Local Debugging
-To see real-time logs and errors:
-```bash
-journalctl -f -o cat /usr/bin/gnome-shell
-```
-
-### Packaging for Release
-When you are ready to upload a new version:
-1. Increment the `version` number in `metadata.json`.
-2. Run the packaging command:
-   ```bash
-   zip -r apcups-monitor-vX.zip extension.js metadata.json prefs.js schemas/ README.md
-   ```
+## 🎁 Support the Project
+If you find this extension useful, consider buying me a coffee!
+<p align="left">
+    <a href="https://www.paypal.com/donate/?hosted_button_id=5DCVELP7BSAVQ">
+        <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donate with PayPal" />
+    </a>
+</p>
 
 ## 📄 License
 MIT License.
