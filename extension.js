@@ -66,7 +66,12 @@ export default class ApcUpsExtension extends Extension {
                 });
             });
 
-            if (!stdout || this._cancellable.is_cancelled()) return;
+            if (this._cancellable.is_cancelled()) return;
+
+            if (!stdout) {
+                if (this._label) this._label.set_text('NODATA');
+                return;
+            }
 
             let data = this._parseAllProps(stdout);
             let nomPower = parseFloat(data.NOMPOWER) || 0;
@@ -98,7 +103,14 @@ export default class ApcUpsExtension extends Extension {
             }
         } catch (e) {
             if (this._label && !this._cancellable.is_cancelled()) {
-                this._label.set_text('ERR');
+                let errStr = e.toString();
+                if (errStr.includes('NOT_FOUND') || errStr.includes('ENOENT') || errStr.includes('failed with exit code 1')) {
+                    this._label.set_text('SETUP');
+                    this._detailsArea.label.set_text('UPS service not found!\n\n1. sudo apt install apcupsd\n2. Configure apcupsd.conf\n3. sudo systemctl enable --now apcupsd');
+                } else {
+                    this._label.set_text('ERR');
+                    this._detailsArea.label.set_text('Error: ' + errStr.substring(0, 40));
+                }
             }
         }
     }
