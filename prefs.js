@@ -45,6 +45,18 @@ export default class ApcUpsPreferences extends ExtensionPreferences {
             settings.set_string('battery-display', ids[batteryRow.selected]);
         });
 
+        const battSourceRow = new Adw.ComboRow({
+            title: 'Battery Status Source',
+            subtitle: 'How to detect if the UPS is on battery',
+            model: new Gtk.StringList({ strings: ['STATUS field (default)', 'Battery charge < 100%'] })
+        });
+        group.add(battSourceRow);
+        const battSourceIds = ['status', 'bcharge'];
+        battSourceRow.selected = Math.max(0, battSourceIds.indexOf(settings.get_string('battery-status-source')));
+        battSourceRow.connect('notify::selected', () => {
+            settings.set_string('battery-status-source', battSourceIds[battSourceRow.selected]);
+        });
+
         const rateRow = new Adw.ActionRow({ title: 'Refresh Rate (seconds)' });
         const adj = new Gtk.Adjustment({ lower: 1, upper: 60, step_increment: 1, value: settings.get_int('refresh-rate') });
         const spin = new Gtk.SpinButton({ adjustment: adj, valign: Gtk.Align.CENTER, visible: true });
