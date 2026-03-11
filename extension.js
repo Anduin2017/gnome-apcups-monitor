@@ -80,7 +80,14 @@ export default class ApcUpsExtension extends Extension {
                 data.POWER = Math.round(nomPower * (loadPct / 100)) + " Watts";
             }
 
-            let isOnBatt = data.STATUS && data.STATUS.includes('ONBATT');
+            let battSource = this._settings.get_string('battery-status-source');
+            let isOnBatt;
+            if (battSource === 'bcharge') {
+                let bcharge = parseFloat(data.BCHARGE) || 0;
+                isOnBatt = bcharge < 100;
+            } else {
+                isOnBatt = data.STATUS && data.STATUS.includes('ONBATT');
+            }
             let key = this._settings.get_string(isOnBatt ? 'battery-display' : 'normal-display');
             let rawValue = data[key] || 'N/A';
             let displayValue = this._formatValue(key, rawValue);

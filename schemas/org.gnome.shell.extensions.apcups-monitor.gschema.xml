@@ -13,5 +13,9 @@
       <default>1</default>
       <summary>Refresh rate in seconds</summary>
     </key>
+    <key name="battery-status-source" type="s">
+      <default>'status'</default>
+      <summary>How to detect battery mode: 'status' uses the STATUS field, 'bcharge' uses battery charge level</summary>
+    </key>
   </schema>
 </schemalist>
